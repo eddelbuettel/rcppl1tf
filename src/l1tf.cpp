@@ -1,6 +1,6 @@
 // l2tf.cpp -- based on l1tf.c by Koh, Kim and Boyd and also GPL'ed
-//             also see  https://github.com/eddelbuettel/l1tf 
-//             and       https://github.com/hadley/l1tf 
+//             also see  https://github.com/eddelbuettel/l1tf
+//             and       https://github.com/hadley/l1tf
 
 
 /* l1tf.c
@@ -12,7 +12,7 @@
  * Author: Kwangmoo Koh (deneb1@stanford.edu)
  */
 
-#include <Rcpp.h>
+#include <RcppArmadillo.h>
 
 #include <R_ext/BLAS.h>
 #include <R_ext/Lapack.h>
@@ -50,7 +50,7 @@ double vecsum(int n, const double *src);
  *                                                                          *
  ****************************************************************************/
 // [[Rcpp::export]]
-Rcpp::NumericVector l1tf(Rcpp::NumericVector yvec, double lambda, bool debug=false) {
+arma::colvec l1tf(arma::colvec yvec, double lambda, bool debug=false) {
 
     int n = yvec.size();
     Rcpp::NumericVector xvec(n);
@@ -128,8 +128,7 @@ Rcpp::NumericVector l1tf(Rcpp::NumericVector yvec, double lambda, bool debug=fal
     ddtf_chol = TRUE;
     /* DDTF stores Cholesky factor of DDT in packed symm.-band representation */
     dptr = DDTF;
-    for (i = 0; i < m; i++)
-    {
+    for (i = 0; i < m; i++) {
         *dptr++ = 6.0;
         *dptr++ =-4.0;
         *dptr++ = 1.0;
@@ -308,7 +307,7 @@ Rcpp::NumericVector l1tf(Rcpp::NumericVector yvec, double lambda, bool debug=fal
 }
 
 // [[Rcpp::export]]
-double l1tf_lambdamax(Rcpp::NumericVector yvec, bool debug=false) {
+double l1tf_lambdamax(arma::colvec yvec, bool debug=false) {
 
     int n = yvec.size();
     double *y = &(yvec[0]);
