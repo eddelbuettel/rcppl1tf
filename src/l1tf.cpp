@@ -1,4 +1,6 @@
 // l2tf.cpp -- based on l1tf.c by Koh, Kim and Boyd and also GPL'ed
+//             also see  https://github.com/eddelbuettel/l1tf 
+//             and       https://github.com/hadley/l1tf 
 
 
 /* l1tf.c
@@ -11,15 +13,6 @@
  */
 
 #include <Rcpp.h>
-
-#if 0
-#include <R.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#endif
 
 #include <R_ext/BLAS.h>
 #include <R_ext/Lapack.h>
@@ -59,12 +52,11 @@ double vecsum(int n, const double *src);
 // [[Rcpp::export]]
 Rcpp::NumericVector l1tf(Rcpp::NumericVector yvec, double lambda, bool debug=false) {
 
-    //int l1tf_impl(const int n, const double *y, const double lambda, double *x, int debug) {
     int n = yvec.size();
     Rcpp::NumericVector xvec(n);
     double *x = &(xvec[0]);
     double *y = &(yvec[0]);
-    
+
     /* parameters */
     const double ALPHA      = 0.01; /* linesearch parameter (0,0.5] */
     const double BETA       = 0.5;  /* linesearch parameter (0,1) */
@@ -143,13 +135,11 @@ Rcpp::NumericVector l1tf(Rcpp::NumericVector yvec, double lambda, bool debug=fal
         *dptr++ = 1.0;
     }
     F77_CALL(dpbtrf)("L",&m,&itwo,DDTF,&ithree,&info);
-    if (info > 0) /* if Cholesky factorization fails, try LU factorization */
-    {
+    if (info > 0) {  /* if Cholesky factorization fails, try LU factorization */
         if (debug) Rprintf("Changing to LU factorization\n");
         ddtf_chol = FALSE;
         dptr = DDTF;
-        for (i = 0; i < m; i++)
-        {
+        for (i = 0; i < m; i++) {
             dptr++;
             dptr++;
             *dptr++ = 1.0;
@@ -182,8 +172,7 @@ Rcpp::NumericVector l1tf(Rcpp::NumericVector yvec, double lambda, bool debug=fal
     /*---------------------------------------------------------------------*
      *                          MAIN LOOP                                  *
      *---------------------------------------------------------------------*/
-    for (iters = 0; iters <= MAXITER; iters++)
-    {
+    for (iters = 0; iters <= MAXITER; iters++) {
         double zTDDTz;
 
         /* COMPUTE DUALITY GAP */
@@ -215,16 +204,14 @@ Rcpp::NumericVector l1tf(Rcpp::NumericVector yvec, double lambda, bool debug=fal
 
         /* STOPPING CRITERION */
 
-        if (gap <= TOL)
-        {
+        if (gap <= TOL) {
             if (debug) Rprintf("Solved\n");
             F77_CALL(dcopy)(&n,y,&ione,x,&ione);
             F77_CALL(daxpy)(&n,&dminusone,DTz,&ione,x,&ione);
             return xvec;
         }
 
-        if (step >= 0.2)
-        {
+        if (step >= 0.2) {
             t = max(2*m*MU/gap, 1.2*t);
         }
 
@@ -239,8 +226,7 @@ Rcpp::NumericVector l1tf(Rcpp::NumericVector yvec, double lambda, bool debug=fal
         F77_CALL(daxpy)(&m,&done,tmp_m2,&ione,dz,&ione);
 
         dptr = S; /* S = D*D'-diag(mu1./f1-mu2./f2) */
-        for (i = 0; i < m; i++)
-        {
+        for (i = 0; i < m; i++) {
             *dptr++ = 6-mu1[i]/f1[i]-mu2[i]/f2[i];
             *dptr++ =-4.0;
             *dptr++ = 1.0;
@@ -249,8 +235,7 @@ Rcpp::NumericVector l1tf(Rcpp::NumericVector yvec, double lambda, bool debug=fal
         F77_CALL(dpbsv)("L",&m,&itwo,&ione,S,&ithree,dz,&m,&info); /* dz=S\r */
 
         norm2_res = F77_CALL(ddot)(&m,rz,&ione,rz,&ione);
-        for (i = 0; i < m; i++)
-        {
+        for (i = 0; i < m; i++) {
             double tmp1, tmp2;
             tmp1 = -mu1[i]*f1[i]-(1/t);
             tmp2 = -mu2[i]*f2[i]-(1/t);
@@ -276,20 +261,17 @@ Rcpp::NumericVector l1tf(Rcpp::NumericVector yvec, double lambda, bool debug=fal
         F77_CALL(daxpy)(&m,&step,dmu1,&ione,mu1,&ione);
         F77_CALL(daxpy)(&m,&step,dmu2,&ione,mu2,&ione);
 
-        for (lsiters = 0; lsiters < MAXLSITER; lsiters++)
-        {
+        for (lsiters = 0; lsiters < MAXLSITER; lsiters++) {
             int linesearch_skip;
             double diff_step;
 
             linesearch_skip = 0;
-            for (i = 0; i < m; i++)
-            {
+            for (i = 0; i < m; i++) {
                 f1[i] =  z[i]-lambda;
                 f2[i] = -z[i]-lambda;
                 if (f1[i] > 0 || f2[i] > 0) linesearch_skip = 1;
             }
-            if (linesearch_skip != 1)
-            {
+            if (linesearch_skip != 1) {
                 DTx(m,z,DTz); /* rz = D*D'*z-D*y-(mu1-mu2) */
                 Dx(n,DTz,DDTz);
                 F77_CALL(dcopy)(&m,DDTz,&ione,rz,&ione);
@@ -301,8 +283,7 @@ Rcpp::NumericVector l1tf(Rcpp::NumericVector yvec, double lambda, bool debug=fal
 
                 /* compute  norm([rz; -mu1.*f1-1/t; -mu2.*f2-1/t]) */
                 norm2_newres = F77_CALL(ddot)(&m,rz,&ione,rz,&ione);
-                for (i = 0; i < m; i++)
-                {
+                for (i = 0; i < m; i++) {
                     double tmp1, tmp2;
                     tmp1 = -mu1[i]*f1[i]-(1/t);
                     tmp2 = -mu2[i]*f2[i]-(1/t);
@@ -329,11 +310,9 @@ Rcpp::NumericVector l1tf(Rcpp::NumericVector yvec, double lambda, bool debug=fal
 // [[Rcpp::export]]
 double l1tf_lambdamax(Rcpp::NumericVector yvec, bool debug=false) {
 
-   //double l1tf_lambdamax_impl(const int n, double *y, int debug) {
     int n = yvec.size();
     double *y = &(yvec[0]);
-    
-  
+
     int i, m, info;
     double maxval;
     double *vec, *mat, *dptr;
@@ -346,20 +325,17 @@ double l1tf_lambdamax(Rcpp::NumericVector yvec, bool debug=false) {
 
     Dx(n,y,vec);
     dptr = mat;
-    for (i = 0; i < m; i++)
-    {
+    for (i = 0; i < m; i++) {
         *dptr++ = 6;
         *dptr++ =-4.0;
         *dptr++ = 1.0;
     }
 
     F77_CALL(dpbsv)("L",&m,&itwo,&ione,mat,&ithree,vec,&m,&info);
-    if (info > 0) /* if Cholesky factorization fails, try LU factorization */
-    {
+    if (info > 0) {  /* if Cholesky factorization fails, try LU factorization */
         if (debug) Rprintf("Changing to LU factorization\n");
         dptr = mat;
-        for (i = 0; i < m; i++)
-        {
+        for (i = 0; i < m; i++) {
             dptr++;
             dptr++;
             *dptr++ = 1.0;
@@ -373,8 +349,7 @@ double l1tf_lambdamax(Rcpp::NumericVector yvec, bool debug=false) {
         if (info > 0) return -1.0;  /* if LU fails, return -1 */
     }
     maxval = 0;
-    for (i = 0; i < m; i++)
-    {
+    for (i = 0; i < m; i++) {
         if (fabs(vec[i]) > maxval) maxval = fabs(vec[i]);
     }
 
@@ -387,8 +362,7 @@ double l1tf_lambdamax(Rcpp::NumericVector yvec, bool debug=false) {
  * y = | 0  1 -2  1  0 |*x
  *     | 0  0  1 -2  1 |
  */
-void Dx(const int n, const double *x, double *y)
-{
+void Dx(const int n, const double *x, double *y) {
     int i;
     for (i = 0; i < n-2; i++,x++)
         *y++ = *x-*(x+1)-*(x+1)+*(x+2); /* y[0..n-3]*/
@@ -402,8 +376,7 @@ void Dx(const int n, const double *x, double *y)
  *     | 0  1 -2 |
  *     | 0  0  1 |
  */
-void DTx(const int n, const double *x, double *y)
-{
+void DTx(const int n, const double *x, double *y) {
     int i;
     *y++ = *x;                          /* y[0]     */
     *y++ = -*x-*x+*(x+1);               /* y[1]     */
@@ -414,22 +387,19 @@ void DTx(const int n, const double *x, double *y)
 }
 
 /* Computes y = a./x, where x has length n */
-void yainvx(int n, const double a, const double *x, double *y)
-{
+void yainvx(int n, const double a, const double *x, double *y) {
     while (n-- != 0)
         *y++ = a/ *x++;
 }
 
 /* Set dst = val, where dst has length n */
-void vecset(int n, const double val, double *dst)
-{
+void vecset(int n, const double val, double *dst) {
     while (n-- != 0)
         *dst++ = val;
 }
 
 /* Computes sum(x) */
-double vecsum(int n, const double *x)
-{
+double vecsum(int n, const double *x) {
     double ret = 0.0;
     while (n-- != 0)
         ret += *x++;
