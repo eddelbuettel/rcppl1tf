@@ -6,35 +6,35 @@
 
 using namespace Rcpp;
 
-// l1tf_R
-Rcpp::NumericVector l1tf_R(Rcpp::NumericVector y, double lambda, bool debug);
-RcppExport SEXP _RcppL1TF_l1tf_R(SEXP ySEXP, SEXP lambdaSEXP, SEXP debugSEXP) {
+// l1tf
+Rcpp::NumericVector l1tf(Rcpp::NumericVector y, double lambda, bool debug);
+RcppExport SEXP _RcppL1TF_l1tf(SEXP ySEXP, SEXP lambdaSEXP, SEXP debugSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y(ySEXP);
     Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< bool >::type debug(debugSEXP);
-    rcpp_result_gen = Rcpp::wrap(l1tf_R(y, lambda, debug));
+    rcpp_result_gen = Rcpp::wrap(l1tf(y, lambda, debug));
     return rcpp_result_gen;
 END_RCPP
 }
-// l1tf_lambdamax_R
-double l1tf_lambdamax_R(Rcpp::NumericVector y, bool debug);
-RcppExport SEXP _RcppL1TF_l1tf_lambdamax_R(SEXP ySEXP, SEXP debugSEXP) {
+// l1tf_lambdamax
+double l1tf_lambdamax(Rcpp::NumericVector y, bool debug);
+RcppExport SEXP _RcppL1TF_l1tf_lambdamax(SEXP ySEXP, SEXP debugSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y(ySEXP);
     Rcpp::traits::input_parameter< bool >::type debug(debugSEXP);
-    rcpp_result_gen = Rcpp::wrap(l1tf_lambdamax_R(y, debug));
+    rcpp_result_gen = Rcpp::wrap(l1tf_lambdamax(y, debug));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_RcppL1TF_l1tf_R", (DL_FUNC) &_RcppL1TF_l1tf_R, 3},
-    {"_RcppL1TF_l1tf_lambdamax_R", (DL_FUNC) &_RcppL1TF_l1tf_lambdamax_R, 2},
+    {"_RcppL1TF_l1tf", (DL_FUNC) &_RcppL1TF_l1tf, 3},
+    {"_RcppL1TF_l1tf_lambdamax", (DL_FUNC) &_RcppL1TF_l1tf_lambdamax, 2},
     {NULL, NULL, 0}
 };
 

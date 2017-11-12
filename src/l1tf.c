@@ -49,7 +49,7 @@ double vecsum(int n, const double *src);
  *              l1tf : main routine for l1 trend filtering                  *
  *                                                                          *
  ****************************************************************************/
-int l1tf(const int n, const double *y, const double lambda, double *x, int debug)
+int l1tf_impl(const int n, const double *y, const double lambda, double *x, int debug)
 {
     /* parameters */
     const double ALPHA      = 0.01; /* linesearch parameter (0,0.5] */
@@ -312,7 +312,7 @@ int l1tf(const int n, const double *y, const double lambda, double *x, int debug
     return(0);
 }
 
-double l1tf_lambdamax(const int n, double *y, int debug)
+double l1tf_lambdamax_impl(const int n, double *y, int debug)
 {
     int i, m, info;
     double maxval;
