@@ -12,6 +12,10 @@
  * Author: Kwangmoo Koh (deneb1@stanford.edu)
  */
 
+// this define overcomes an old design wart where (one col or row) vectors are
+// always returned as a (one col or row) matrix -- now the col vectors collapse
+// does not seem to work here though -- to be seen
+// #define RCPP_ARMADILLO_RETURN_COLVEC_AS_VECTOR 1
 #include <RcppArmadillo.h>
 
 #include <R_ext/BLAS.h>
@@ -41,7 +45,7 @@ const int    iseven     = 7;
 void   Dx(const int n, const double *x, double *y); /* y = D*x */
 void   DTx(const int n, const double *x, double *y); /* y = D'*x */
 void   yainvx(int n, const double a, const double *x, double *y); /* y = a./x */
-void   vecset(int n, const double val, double *dst);
+//void   vecset(int n, const double val, double *dst);
 double vecsum(int n, const double *src);
 
 /****************************************************************************
@@ -53,7 +57,7 @@ double vecsum(int n, const double *src);
 arma::colvec l1tf(arma::colvec yvec, double lambda, bool debug=false) {
 
     int n = yvec.size();
-    Rcpp::NumericVector xvec(n);
+    arma::colvec xvec(n);
     double *x = &(xvec[0]);
     double *y = &(yvec[0]);
 
@@ -76,8 +80,14 @@ arma::colvec l1tf(arma::colvec yvec, double lambda, bool debug=false) {
 
     /* vector of size m */
     double *z;                      /* dual variable */
+    arma::vec Z = arma::ones(m); z = &(Z[0]);
     double *mu1, *mu2;              /* dual of dual variables */
+    arma::vec MU1 = arma::zeros(m); mu1 = &(MU1[0]);
+    arma::vec MU2 = arma::zeros(m); mu2 = &(MU2[0]);
     double *f1, *f2;                /* constraints */
+    arma::vec F1 = arma::ones(m) * (-lambda); f1 = &(F1[0]);
+    arma::vec F2 = arma::ones(m) * (-lambda); f2 = &(F2[0]);
+
     double *dz, *dmu1, *dmu2;       /* search directions */
     double *w, *rz, *tmp_m2, *tmp_m1, *Dy, *DDTz;
     double norm2_res, norm2_newres;
@@ -100,11 +110,11 @@ arma::colvec l1tf(arma::colvec yvec, double lambda, bool debug=false) {
     Dy      = malloc(sizeof(double)*m);
     DDTz    = malloc(sizeof(double)*m);
 
-    z       = malloc(sizeof(double)*m);
-    mu1     = malloc(sizeof(double)*m);
-    mu2     = malloc(sizeof(double)*m);
-    f1      = malloc(sizeof(double)*m);
-    f2      = malloc(sizeof(double)*m);
+    //z       = malloc(sizeof(double)*m);
+    //mu1     = malloc(sizeof(double)*m);
+    //mu2     = malloc(sizeof(double)*m);
+    //f1      = malloc(sizeof(double)*m);
+    //f2      = malloc(sizeof(double)*m);
     dz      = malloc(sizeof(double)*m);
     dmu1    = malloc(sizeof(double)*m);
     dmu2    = malloc(sizeof(double)*m);
@@ -156,11 +166,11 @@ arma::colvec l1tf(arma::colvec yvec, double lambda, bool debug=false) {
     t       = -1;
     step    =  1;
 
-    vecset(m,0.0,z);
-    vecset(m,1.0,mu1);
-    vecset(m,1.0,mu2);
-    vecset(m,-lambda,f1);
-    vecset(m,-lambda,f2);
+    //vecset(m,0.0,z);
+    //vecset(m,1.0,mu1);
+    //vecset(m,1.0,mu2);
+    //vecset(m,-lambda,f1);
+    //vecset(m,-lambda,f2);
 
     DTx(m,z,DTz); /* DTz = D'*z */
     Dx(n,DTz,DDTz); /* DDTz = D*D'*z */
@@ -391,11 +401,11 @@ void yainvx(int n, const double a, const double *x, double *y) {
         *y++ = a/ *x++;
 }
 
-/* Set dst = val, where dst has length n */
-void vecset(int n, const double val, double *dst) {
-    while (n-- != 0)
-        *dst++ = val;
-}
+// /* Set dst = val, where dst has length n */
+// void vecset(int n, const double val, double *dst) {
+//     while (n-- != 0)
+//         *dst++ = val;
+// }
 
 /* Computes sum(x) */
 double vecsum(int n, const double *x) {
