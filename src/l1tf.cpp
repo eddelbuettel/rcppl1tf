@@ -74,9 +74,12 @@ arma::colvec l1tf(arma::colvec yvec, double lambda, bool debug=false) {
 
     /* matrix of size 3xm */
     double *S, *DDTF;
+    arma::mat Smat(3, m); S = &(Smat[0]);
+    arma::mat DDTFmat(7, m); DDTF = &(DDTFmat[0]);
 
     /* vector of size n */
     double *DTz;
+    arma::vec DTzvec(n); DTz = &(DTzvec[0]);
 
     /* vector of size m */
     double *z;                      /* dual variable */
@@ -89,7 +92,16 @@ arma::colvec l1tf(arma::colvec yvec, double lambda, bool debug=false) {
     arma::vec F2 = arma::ones(m) * (-lambda); f2 = &(F2[0]);
 
     double *dz, *dmu1, *dmu2;       /* search directions */
+    arma::vec DZ(m); dz = &(DZ[0]);
+    arma::vec DMU1(m); dmu1 = &(DMU1[0]);
+    arma::vec DMU2(m); dmu2 = &(DMU2[0]);
     double *w, *rz, *tmp_m2, *tmp_m1, *Dy, *DDTz;
+    arma::vec W(m); w = &(W[0]);
+    arma::vec RZ(m); rz = &(RZ[0]);
+    arma::vec TMPM1(m); tmp_m1 = &(TMPM1[0]);
+    arma::vec TMPM2(m); tmp_m2 = &(TMPM2[0]);
+    arma::vec Dyvec(m); Dy = &(Dyvec[0]);
+    arma::vec DDTzvec(m); DDTz = &(DDTzvec[0]);
     double norm2_res, norm2_newres;
 
     double pobj1, pobj2, pobj, dobj, gap;
@@ -100,30 +112,31 @@ arma::colvec l1tf(arma::colvec yvec, double lambda, bool debug=false) {
     int iters, lsiters;             /* IPM and linesearch iterations */
     int i, info;
     int *IPIV;
+    arma::ivec IPIVvec(m); IPIV = &(IPIVvec[0]);
     int ddtf_chol;
 
     /* memory allocation */
-    S       = malloc(sizeof(double)*m*3);
-    DDTF    = malloc(sizeof(double)*m*7);
+    //S       = malloc(sizeof(double)*m*3);
+    //DDTF    = malloc(sizeof(double)*m*7);
 
-    DTz     = malloc(sizeof(double)*n);
-    Dy      = malloc(sizeof(double)*m);
-    DDTz    = malloc(sizeof(double)*m);
+    //DTz     = malloc(sizeof(double)*n);
+    //Dy      = malloc(sizeof(double)*m);
+    //DDTz    = malloc(sizeof(double)*m);
 
     //z       = malloc(sizeof(double)*m);
     //mu1     = malloc(sizeof(double)*m);
     //mu2     = malloc(sizeof(double)*m);
     //f1      = malloc(sizeof(double)*m);
     //f2      = malloc(sizeof(double)*m);
-    dz      = malloc(sizeof(double)*m);
-    dmu1    = malloc(sizeof(double)*m);
-    dmu2    = malloc(sizeof(double)*m);
-    w       = malloc(sizeof(double)*m);
-    rz      = malloc(sizeof(double)*m);
-    tmp_m1  = malloc(sizeof(double)*m);
-    tmp_m2  = malloc(sizeof(double)*m);
+    //dz      = malloc(sizeof(double)*m);
+    //dmu1    = malloc(sizeof(double)*m);
+    //dmu2    = malloc(sizeof(double)*m);
+    //w       = malloc(sizeof(double)*m);
+    //rz      = malloc(sizeof(double)*m);
+    //tmp_m1  = malloc(sizeof(double)*m);
+    //tmp_m2  = malloc(sizeof(double)*m);
 
-    IPIV    = malloc(sizeof(int)*m);
+    //IPIV    = malloc(sizeof(int)*m);
 
     /* INITIALIZATION */
 
@@ -328,9 +341,12 @@ double l1tf_lambdamax(arma::colvec yvec, bool debug=false) {
     int *piv;
 
     m = n-2;
-    vec = malloc(sizeof(double)*m);
-    mat = malloc(sizeof(double)*7*m);
-    piv = malloc(sizeof(int)*m);
+    //vec = malloc(sizeof(double)*m);
+    //mat = malloc(sizeof(double)*7*m);
+    //piv = malloc(sizeof(int)*m);
+    arma::vec VEC(m); vec = &(VEC[0]);
+    arma::mat MAT(7,m); mat = &(MAT[0]);
+    arma::ivec PIV(m); piv = &(PIV[0]);
 
     Dx(n,y,vec);
     dptr = mat;
