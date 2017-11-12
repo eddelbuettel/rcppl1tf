@@ -1,0 +1,13 @@
+Package: RcppL1TF
+Type: Package
+Title: Rcpp Wrapper for L1TF
+Version: 0.0.1
+Date: 2017-11-11
+Author: Dirk Eddelbuettel
+Maintainer: Dirk Eddelbuettel <edd@debian.org>
+Description: L1 Trend Filtering based on Koh, Kim and Boyd (2007) -- and using the
+ l1tf package (Wickham, 2014) as a starting point
+License: GPL (>= 2)
+Imports: Rcpp
+LinkingTo: Rcpp, RcppArmadillo
+RoxygenNote: 6.0.1
