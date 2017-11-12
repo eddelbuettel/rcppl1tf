@@ -7,27 +7,27 @@
 using namespace Rcpp;
 
 // l1tf
-Rcpp::NumericVector l1tf(Rcpp::NumericVector y, double lambda, bool debug);
-RcppExport SEXP _RcppL1TF_l1tf(SEXP ySEXP, SEXP lambdaSEXP, SEXP debugSEXP) {
+Rcpp::NumericVector l1tf(Rcpp::NumericVector yvec, double lambda, bool debug);
+RcppExport SEXP _RcppL1TF_l1tf(SEXP yvecSEXP, SEXP lambdaSEXP, SEXP debugSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type yvec(yvecSEXP);
     Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< bool >::type debug(debugSEXP);
-    rcpp_result_gen = Rcpp::wrap(l1tf(y, lambda, debug));
+    rcpp_result_gen = Rcpp::wrap(l1tf(yvec, lambda, debug));
     return rcpp_result_gen;
 END_RCPP
 }
 // l1tf_lambdamax
-double l1tf_lambdamax(Rcpp::NumericVector y, bool debug);
-RcppExport SEXP _RcppL1TF_l1tf_lambdamax(SEXP ySEXP, SEXP debugSEXP) {
+double l1tf_lambdamax(Rcpp::NumericVector yvec, bool debug);
+RcppExport SEXP _RcppL1TF_l1tf_lambdamax(SEXP yvecSEXP, SEXP debugSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type yvec(yvecSEXP);
     Rcpp::traits::input_parameter< bool >::type debug(debugSEXP);
-    rcpp_result_gen = Rcpp::wrap(l1tf_lambdamax(y, debug));
+    rcpp_result_gen = Rcpp::wrap(l1tf_lambdamax(yvec, debug));
     return rcpp_result_gen;
 END_RCPP
 }

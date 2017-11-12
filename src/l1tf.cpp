@@ -1,3 +1,6 @@
+// l2tf.cpp -- based on l1tf.c by Koh, Kim and Boyd and also GPL'ed
+
+
 /* l1tf.c
  *
  * Copyright (C) 2007 Kwangmoo Koh, Seung-Jean Kim and Stephen Boyd.
@@ -7,12 +10,16 @@
  * Author: Kwangmoo Koh (deneb1@stanford.edu)
  */
 
+#include <Rcpp.h>
+
+#if 0
 #include <R.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#endif
 
 #include <R_ext/BLAS.h>
 #include <R_ext/Lapack.h>
@@ -49,8 +56,15 @@ double vecsum(int n, const double *src);
  *              l1tf : main routine for l1 trend filtering                  *
  *                                                                          *
  ****************************************************************************/
-int l1tf_impl(const int n, const double *y, const double lambda, double *x, int debug)
-{
+// [[Rcpp::export]]
+Rcpp::NumericVector l1tf(Rcpp::NumericVector yvec, double lambda, bool debug=false) {
+
+    //int l1tf_impl(const int n, const double *y, const double lambda, double *x, int debug) {
+    int n = yvec.size();
+    Rcpp::NumericVector xvec(n);
+    double *x = &(xvec[0]);
+    double *y = &(yvec[0]);
+    
     /* parameters */
     const double ALPHA      = 0.01; /* linesearch parameter (0,0.5] */
     const double BETA       = 0.5;  /* linesearch parameter (0,1) */
@@ -206,7 +220,7 @@ int l1tf_impl(const int n, const double *y, const double lambda, double *x, int 
             if (debug) Rprintf("Solved\n");
             F77_CALL(dcopy)(&n,y,&ione,x,&ione);
             F77_CALL(daxpy)(&n,&dminusone,DTz,&ione,x,&ione);
-            return(0);
+            return xvec;
         }
 
         if (step >= 0.2)
@@ -309,11 +323,17 @@ int l1tf_impl(const int n, const double *y, const double lambda, double *x, int 
     if (debug) Rprintf("Maxiter exceeded\n");
     F77_CALL(dcopy)(&n,y,&ione,x,&ione);
     F77_CALL(daxpy)(&n,&dminusone,DTz,&ione,x,&ione);
-    return(0);
+    return xvec;
 }
 
-double l1tf_lambdamax_impl(const int n, double *y, int debug)
-{
+// [[Rcpp::export]]
+double l1tf_lambdamax(Rcpp::NumericVector yvec, bool debug=false) {
+
+   //double l1tf_lambdamax_impl(const int n, double *y, int debug) {
+    int n = yvec.size();
+    double *y = &(yvec[0]);
+    
+  
     int i, m, info;
     double maxval;
     double *vec, *mat, *dptr;
