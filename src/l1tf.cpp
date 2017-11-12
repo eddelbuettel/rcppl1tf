@@ -1,7 +1,8 @@
 // l2tf.cpp -- based on l1tf.c by Koh, Kim and Boyd and also GPL'ed
-//             also see  https://github.com/eddelbuettel/l1tf
-//             and       https://github.com/hadley/l1tf
-
+//
+// also see    https://github.com/eddelbuettel/l1tf
+//             https://github.com/hadley/l1tf
+//             https://github.com/thanos-mad-titan/l1tf
 
 /* l1tf.c
  *
@@ -16,6 +17,10 @@
 // always returned as a (one col or row) matrix -- now the col vectors collapse
 // does not seem to work here though -- to be seen
 // #define RCPP_ARMADILLO_RETURN_COLVEC_AS_VECTOR 1
+
+// Use SuperLU for sparse matrix
+#define ARMA_USE_SUPERLU 1
+
 #include <RcppArmadillo.h>
 
 #include <R_ext/BLAS.h>
@@ -380,6 +385,23 @@ double l1tf_lambdamax(arma::colvec yvec, bool debug=false) {
 
     return maxval;
 }
+
+// [[Rcpp::export]]
+double superlu_lambdamax(const arma::vec & y) {
+	const int n = y.size();
+	const int m = n - 2;  // length of Dx
+
+    arma::mat I2 = arma::eye(m, m);
+    arma::mat O2 = arma::zeros(m, 1);
+    arma::sp_mat D = arma::sp_mat(arma::join_horiz(I2, arma::join_horiz(O2, O2)) +
+                                  arma::join_horiz(O2, arma::join_horiz(-2.0 * I2, O2)) +
+                                  arma::join_horiz(O2, arma::join_horiz(O2, I2)));
+
+    arma::sp_mat DDT = D * D.t();
+    arma::vec Dy = D * y;
+	return arma::norm(arma::spsolve(DDT, Dy), "inf");
+}
+
 
 /* Computes y = D*x, where x has length n
  *

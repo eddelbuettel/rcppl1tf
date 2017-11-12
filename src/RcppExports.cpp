@@ -31,10 +31,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// superlu_lambdamax
+double superlu_lambdamax(const arma::vec& y);
+RcppExport SEXP _RcppL1TF_superlu_lambdamax(SEXP ySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    rcpp_result_gen = Rcpp::wrap(superlu_lambdamax(y));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_RcppL1TF_l1tf", (DL_FUNC) &_RcppL1TF_l1tf, 3},
     {"_RcppL1TF_l1tf_lambdamax", (DL_FUNC) &_RcppL1TF_l1tf_lambdamax, 2},
+    {"_RcppL1TF_superlu_lambdamax", (DL_FUNC) &_RcppL1TF_superlu_lambdamax, 1},
     {NULL, NULL, 0}
 };
 

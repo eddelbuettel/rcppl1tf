@@ -9,3 +9,7 @@ l1tf_lambdamax <- function(yvec, debug = FALSE) {
     .Call(`_RcppL1TF_l1tf_lambdamax`, yvec, debug)
 }
 
+superlu_lambdamax <- function(y) {
+    .Call(`_RcppL1TF_superlu_lambdamax`, y)
+}
+
