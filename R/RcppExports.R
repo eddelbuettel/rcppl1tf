@@ -13,3 +13,7 @@ superlu_lambdamax <- function(y) {
     .Call(`_RcppL1TF_superlu_lambdamax`, y)
 }
 
+superlu_l1tf <- function(y_vec, lambda) {
+    .Call(`_RcppL1TF_superlu_l1tf`, y_vec, lambda)
+}
+

@@ -42,11 +42,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// superlu_l1tf
+arma::vec superlu_l1tf(const arma::vec y_vec, const double lambda);
+RcppExport SEXP _RcppL1TF_superlu_l1tf(SEXP y_vecSEXP, SEXP lambdaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec >::type y_vec(y_vecSEXP);
+    Rcpp::traits::input_parameter< const double >::type lambda(lambdaSEXP);
+    rcpp_result_gen = Rcpp::wrap(superlu_l1tf(y_vec, lambda));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_RcppL1TF_l1tf", (DL_FUNC) &_RcppL1TF_l1tf, 3},
     {"_RcppL1TF_l1tf_lambdamax", (DL_FUNC) &_RcppL1TF_l1tf_lambdamax, 2},
     {"_RcppL1TF_superlu_lambdamax", (DL_FUNC) &_RcppL1TF_superlu_lambdamax, 1},
+    {"_RcppL1TF_superlu_l1tf", (DL_FUNC) &_RcppL1TF_superlu_l1tf, 2},
     {NULL, NULL, 0}
 };
 
