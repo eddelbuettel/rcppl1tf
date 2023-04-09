@@ -5,8 +5,8 @@ Version: 0.0.1
 Date: 2017-11-11
 Author: Dirk Eddelbuettel
 Maintainer: Dirk Eddelbuettel <edd@debian.org>
-Description: L1 Trend Filtering based on Koh, Kim and Boyd (2007) -- and using the
- l1tf package (Wickham, 2014) as a starting point
+Description: L1 Trend Filtering implementation based on Koh, Kim and Boyd (2007)
+ using the l1tf package (Wickham, 2014) as a starting point.
 License: GPL (>= 2)
 Imports: Rcpp
 LinkingTo: Rcpp, RcppArmadillo
